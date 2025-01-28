@@ -6,8 +6,8 @@ import scrapetube
 from googleapiclient.discovery import build
 from youtube_transcript_api import YouTubeTranscriptApi
 
-from api_key import api_key
-
+from dotenv import load_dotenv
+import os
 
 def get_transcript(video_id):
     """Get English or US English transcriptions for YouTube Video"""
@@ -108,8 +108,8 @@ def get_video_details(youtube, video_id):
 
     return title, description
 
-
-youtube = build("youtube", "v3", developerKey=api_key)
+api_key = os.getenv('API_KEY')
+youtube = build("youtube", "v3", developerKey=)
 
 
 def main():
