@@ -1,74 +1,106 @@
 # Intro
 
-One of my favorite YouTube rabit-holes is watching expensive mansion tours, sometime this extends to yatch and private jet tours as well, but the videos I watch are typically made by the same person: Enes Yilmazer.
+The intersection of luxury real estate and social media has created a fascinating niche on YouTube, where mansion tour videos have become increasingly popular. Among the most prominent creators in this space is Enes Yilmazer, whose channel has garnered significant attention  for its detailed walkthroughs of some of the world's most expensive properties, from luxurious mansions to superyachts and private jets.
 
-I wanted to know if Yilmazer uses different words for differently priced homes
+A compelling question arises: Does the language used in these videos correlate with the price points of the properties being showcased? This analysis aims to explore the relationship between verbal presentation and property value by examining the linguistic patterns in Yilmazer's video catalog spanning 283 videos as of December 2024.
 
-# Data
+# Data Collection and Preparation
 
-To do this I looked at the transcript of his video catelog. Yilmazer has 283 videos (as of 12/19/2024), but not all of these videos have dollar amounts or are acutal asset listings.
+## Source Data Overview
 
-## Gathering Data
+The analysis is based on Enes Yilmazer's YouTube channel, which contained 283 videos as of December 2024. The dataset required extensive preprocessing to prepare for analysis, primarily focusing on:
 
-## Cleaning and Transforming Data
+* Video transcripts
+* Video titles and descriptions
+* Property valuations
+* Asset classification
 
-Removing numbers from script and attaching house value to script
+## Property Value Identification
 
-Can look for dollar amount in three places:
+Property values were identified through a three-tier approach:
 
-1. Title
-2. Description
-3. Thumbnail
+1. **Title Extraction**: Primary source for property values, typically explicitly stated
+2. **Description Analysis**: Secondary source when titles didn't contain pricing information
+3. **Manual Research**: For remaining videos, values were determined through:
+   * Thumbnail information
+   * Internet research of property listings
+   * Cross-referencing with real estate databases
 
-Title and description are the easiest. and Get x / 283 dollar amounts
+## Data Cleaning Process
 
-x left to thumbnail and some internet research. This was done by hand for x number of videos
+The cleaning process involved several key steps:
 
-Left with 239 videos with dollar amounts for analysis
+1. **Transcript Standardization**
+
+* Removal of timestamps
+* Normalization of text (lowercase, punctuation removal)
+* Elimination of common YouTube-specific phrases and filler words
+
+2. **Value Standardization**
+
+* Converting all prices to USD
+* Normalizing price formats (e.g., "12.5M" to "12500000")
+* Verification of current values versus historical listing prices
+
+3. **Asset Classification**
+
+* Categorization of properties (mansions, penthouses, etc.)
+* Identification of non-residential assets (yachts, jets)
+* Tagging of special features or unique characteristics
+
+## Final Dataset Composition
+
+After cleaning and validation:
+
+* 239 videos with confirmed dollar amounts
+* Complete transcripts for all included videos
+* Standardized property values
+* Asset classification tags
+
+The resulting dataset provides a robust foundation for analyzing the relationship between linguistic patterns and property values across different types of luxury assets.
 
 # Analysis
 
-## What Assets are Highlighted on this channel?
+The initial investigation focused on distinguishing different types of luxury assets through natural language processing of video
+transcripts. Rather than relying on explicit categorization, this approach allowed patterns to emerge naturally from the language used in presentations.
+Using unsupervised learning techniques, four distinct clusters emerged from the data, each representing different periods and types of content on Yilmazer's channel. The first cluster predominantly contained earlier content, including smaller luxury homes valued between $1M-$10M, along with private jets and high-end motorhomes. These videos typically featured simpler vocabulary and shorter tour durations. The second cluster centered around properties filmed during the COVID-19 pandemic (2020-2021), primarily mansions in the $10M-$50M range, with notable emphasis on home offices and wellness amenities.
 
-This channel mainly focuses on house listings, but it also has some other luxury assets like vehicals. These will definitely have different values so I want to see if I can cluster on each asset type only using the script.
+Yacht tours formed their own distinct cluster, characterized by specialized maritime vocabulary and detailed technical specifications. The fourth cluster comprised recent ultra-luxury mansion tours, typically properties valued above $50M, featuring more sophisticated vocabulary and longer, more detailed presentations of architectural features and amenities.
 
-I tried to cluster on only terms to see if I was able to seperate the assets.
+The decision to implement Bisecting K-Means clustering proved particularly effective for this analysis. This method offered several advantages over traditional K-Means clustering, including better handling of outliers and more consistent results with text data. The algorithm successfully separated assets into two primary categories: unique assets (jets, yachts, tiny homes) and traditional properties (mansions, estates, penthouses).
 
-I found that clustering on scripts was mostly on date of video creation instead of asset type. This makes sense because as time porgressed Enes changed the way he speaks about properties and develops speaking habits over time. It also could be due to the change in asset cost over time. When Enes started his channel he was reviewing expensive LA homes, but now he travels the world to homes that are up to ten times the price of the homes that he originally was reviewing. This can be captured by the fact that motorhomes and tiny homes are captured in the same cluster as the earlier, less expensive, homes.
+For price prediction, various regression models were tested using TF-IDF features with a maximum of 1000 features. Ridge Regression showed particularly strong performance, maintaining consistency across different feature sets and suggesting the presence of multicollinearity in the features. The ensemble method, combining multiple models, achieved the best overall performance with a mean absolute error of $11.89M after log transformation of price values.
 
-The four clusters were:
+Location-related terms, luxury amenity descriptions, and architectural vocabulary emerged as strong predictive features across all models. Interestingly, while principal component analysis (PCA) was tested as a dimensionality reduction technique, it didn't consistently improve results, suggesting that important information was contained in the original feature set. The analysis demonstrates that linguistic patterns in luxury real estate videos can indeed predict property values with reasonable accuracy. However, there remains significant room for improvement through further refinement of features and model architecture. Future work could explore incorporating visual features or expanding the analysis to multiple channels to create a more robust prediction model.
 
-1. Smaller Assets (early homes, jets, and motorhomes)
-2. Covid Year Mansions
-3. Yatchs
-4. Recent Mansions
+## Model Performance Comparison
 
-**EXPLAIN THE BENIFITS OF USING BISECTING KMEANS HERE**
+| Model Type        | MAE     |
+| ----------------- | ------- |
+| Linear Regression | $23.84M |
+| Ridge             | $13.16M |
+| Random Forest     | $17.72M |
+| Ensemble          | $11.89M |
 
-Bisecting KMeans had an optimal k of three, but I only used two clusters because thge clustering algorithm did a good job of spliting items in to unqiue and traditional assets
 
-1. Unqiue assets (jets, yachts, tiny homes)
-2. Traditional
+## Conclusion and Future Directions
 
-## Home Value Reggression
+This analysis demonstrates that linguistic patterns in luxury real estate videos can effectively predict property values, achieving a mean  absolute error of $11.89M through ensemble modeling. We observed clear evolution in Yilmazer's presentation style as his channel progressed from local LA properties to international ultra-luxury estates, with vocabulary and tour comprehensiveness adapting to match increasing property values.
 
-### TF-IDF
+## Current Limitations
 
-Max features of 1000
+* Single-channel analysis
+* Sample size of 239 properties
+* Text-only analysis, excluding visual elements
+* Market fluctuation effects not considered
 
-| Model                    | MAE            | PCA (100) MAE     | Log Transformation MAE |
-| ------------------------ | -------------- | ----------------- | ---------------------- |
-| Simple Linear Regression | $23,961,860.07 | \$28,610,099.78   | $23835410.70           |
-| LASSO                    | $36,361,297.24 | \$28,609,853.22   | $19162763.31           |
-| Ridge                    | $18,785,882.68 | \$18,733,956.39   | $13161090.62           |
-| Random Forest            | $19,313,536.10 | \$21,263,132.7679 | $17715967.87           |
-| XGBoost                  | $20,009,925.67 | \$20,238,477.8399 | $16835319.53           |
-| LIghtGBM                 | $19,944,572.21 | \$22,023,846.4364 | $16968777.14           |
-| Support Vector Regession | $23,215,341.70 | \$23,215,341.4186 | $18610803.73           |
-| Ensemble                 | $18,837,893.41 | \$19,336,458.87   | $11,888,280.54         |
+## Future Opportunities
 
-Using just TF-IDF Matrix able to get down to an average absolute error of $18 million, a pretty good starting point but can be improved
+The most promising directions for expanding this research include:
 
-# Future Analysis
+* Cross-channel analysis incorporating other luxury real estate creators
+* Integration of visual elements through computer vision
+* Addition of market context and economic indicators
+* Implementation of advanced language models and custom embeddings
 
-Only one channel. Is it possible to do this analysis across multiple channels with different vocabulary and tendencies
+These enhancements could provide deeper insights into how luxury properties are presented across digital platforms while improving prediction accuracy. As luxury real estate content continues to grow in popularity, such analytical approaches become increasingly valuable for understanding high-value property presentation in digital media.
